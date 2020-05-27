@@ -221,8 +221,8 @@
   "behavior" : {
     "service-mapping" : {
       "url" : "",
-      "name" : "kb_Bowtie2",
-      "method" : "align_reads_to_assembly_app",
+      "name" : "kb_Bwa",
+      "method" : "run_kb_Bwa",
       "input_mapping" : [
         {
           "narrative_system_variable": "workspace",

@@ -11,6 +11,8 @@ module kb_Bwa {
     /*
         This example function accepts any number of parameters and returns results in a KBaseReport
     */
+
+
     funcdef run_kb_Bwa(mapping<string,UnspecifiedObject> params) returns (ReportResults output) authentication required;
 
 };

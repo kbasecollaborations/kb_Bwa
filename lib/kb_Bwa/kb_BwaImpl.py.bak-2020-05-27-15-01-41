@@ -37,8 +37,6 @@ class kb_Bwa:
     # be found
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
-        self.workspace_url = config['workspace-url']
-        self.srv_wiz_url = config['srv-wiz-url']
         self.callback_url = os.environ['SDK_CALLBACK_URL']
         self.shared_folder = config['scratch']
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
@@ -46,7 +44,7 @@ class kb_Bwa:
         #END_CONSTRUCTOR
         pass
 
-    '''
+
     def get_bwa_index(self, ctx, params):
         """
         :param params: instance of type "GetBwaIndex" -> structure: parameter
@@ -62,20 +60,24 @@ class kb_Bwa:
         # ctx is the context object
         # return variables are: result
         #BEGIN get_bwa_index
-        #END get_bwa_index
-        report = KBaseReport(self.callback_url)
-        report_info = report.create({'report': {'objects_created': []},
-                                     'workspace_name': params['workspace_name']})
-        result = {
-            'report_name': report_info['name'],
-            'report_ref': report_info['ref'],
-        }
+
+        exit(params)
         # At some point might do deeper type checking...
+        print('Running get_bwa_index() with params=')
+
+        bwaIndexBuilder = BwaIndexBuilder(self.scratch_dir, self.workspace_url,
+                                                  self.callback_url, self.srv_wiz_url,
+                                                  ctx.provenance())
+        result = bwaIndexBuilder.get_index(params)
+        # END get_bowtie2_index
+
+        # At some point might do deeper type checking...
+        result = {}
         if not isinstance(result, dict):
-            raise ValueError('Method get_bwa_index return value ' +
+            raise ValueError('Method get_bowtie2_index return value ' +
                              'result is not type dict as required.')
         # return the results
-        return [result]'''
+        return [result]
 
     def run_kb_Bwa(self, ctx, params):
         """
@@ -86,12 +88,6 @@ class kb_Bwa:
         # ctx is the context object
         # return variables are: output
         #BEGIN run_kb_Bwa
-
-        bwaIndexBuilder = BwaIndexBuilder(self.shared_folder, self.workspace_url,
-                                                  self.callback_url, self.srv_wiz_url,
-                                                  ctx.provenance())
-        result = bwaIndexBuilder.get_index(params)
-        exit(result)
         report = KBaseReport(self.callback_url)
         report_info = report.create({'report': {'objects_created':[],
                                                 'text_message': params['parameter_1']},

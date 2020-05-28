@@ -2,6 +2,7 @@
 import os
 import time
 import unittest
+import shutil
 from configparser import ConfigParser
 
 from kb_Bwa.kb_BwaImpl import kb_Bwa
@@ -10,6 +11,8 @@ from kb_Bwa.authclient import KBaseAuth as _KBaseAuth
 
 from installed_clients.WorkspaceClient import Workspace
 
+from installed_clients.AssemblyUtilClient import AssemblyUtil
+from installed_clients.GenomeFileUtilClient import GenomeFileUtil
 
 class kb_BwaTest(unittest.TestCase):
 
@@ -52,8 +55,41 @@ class kb_BwaTest(unittest.TestCase):
             cls.wsClient.delete_workspace({'workspace': cls.wsName})
             print('Test workspace was deleted')
 
+
+
+    def getWsName(self):
+        if hasattr(self.__class__, 'wsName'):
+            return self.__class__.wsName
+        suffix = int(time.time() * 1000)
+        wsName = "test_kb_Bowtie2_" + str(suffix)
+        ret = self.getWsClient().create_workspace({'workspace': wsName})  # noqa
+        self.__class__.wsName = wsName
+        return wsName
+
+    def getImpl(self):
+        return self.__class__.serviceImpl
+
+    def getContext(self):
+        return self.__class__.ctx
+
+    def loadGenome(self):
+        if hasattr(self.__class__, 'genome_ref'):
+            return self.__class__.genome_ref
+        genbank_file_path = os.path.join(self.scratch, 'minimal.gbff')
+        shutil.copy(os.path.join('data', 'minimal.gbff'), genbank_file_path)
+        gfu = GenomeFileUtil(self.callback_url)
+        genome_ref = gfu.genbank_to_genome({'file': {'path': genbank_file_path},
+                                            'workspace_name': self.getWsName(),
+                                            'genome_name': 'test_genome',
+                                            'source': 'Ensembl',
+                                            'generate_ids_if_needed': 1,
+                                            'generate_missing_genes': 1
+                                            })['genome_ref']
+        self.__class__.genome_ref = genome_ref
+        return genome_ref
+
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    def test_your_method(self):
+    '''def test_your_method(self):
         # Prepare test objects in workspace if needed using
         # self.getWsClient().save_objects({'workspace': self.getWsName(),
         #                                  'objects': []})
@@ -63,5 +99,17 @@ class kb_BwaTest(unittest.TestCase):
         #
         # Check returned data with
         # self.assertEqual(ret[...], ...) or other unittest methods
+        genome_ref = self.loadGenome()
+
         ret = self.serviceImpl.run_kb_Bwa(self.ctx, {'workspace_name': self.wsName,
-                                                             'parameter_1': 'Hello World!'})
+                                                         'parameter_1': 'Hello World!'})'''
+
+
+    def test_build_bowtie2_index_from_genome(self):
+
+        # finally, try it with a genome_ref instead
+        genome_ref = self.loadGenome()
+        res = self.getImpl().run_kb_Bwa(self.getContext(), {'workspace_name': self.wsName,'ref': genome_ref})
+        exit(res)
+
+

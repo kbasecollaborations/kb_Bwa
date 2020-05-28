@@ -18,7 +18,7 @@ class BwaIndexBuilder:
         self.ws = Workspace(self.ws_url)
         self.callback_url = callback_url
         self.service_wizard_url = service_wizard_url
-        self.bowtie2 = BwaRunner(self.scratch_dir)
+        self.bwa = BwaRunner(self.scratch_dir)
         self.provenance = provenance
 
     def get_index(self, params):
@@ -193,7 +193,7 @@ class BwaIndexBuilder:
 
         # configure the command line args and run it
         cli_params = self._build_cli_params(fasta_info['path'], fasta_info['assembly_name'], validated_params)
-        self.bowtie2.run('bowtie2-build', cli_params)
+        self.bwa.run('index', cli_params)
         index_info = {'output_dir': validated_params['output_dir'],
                       'index_files_basename': fasta_info['assembly_name']}
 
@@ -213,11 +213,13 @@ class BwaIndexBuilder:
         cli_params = []
 
         # always run in quiet mode
-        cli_params.append('--quiet')
+        #cli_params.append('-a bwtsw')
 
         # positional args: first the fasta path, then the base name used for the index files
         cli_params.append(fasta_file_path)
-        cli_params.append(os.path.join(validated_params['output_dir'], index_files_basename))
+        cli_params.append( "-p ")
+        cli_params.append(index_files_basename)
+        #cli_params.append(os.path.join(validated_params['output_dir'], "-p " +index_files_basename))
 
         return cli_params
 

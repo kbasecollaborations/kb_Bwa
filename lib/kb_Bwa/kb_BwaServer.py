@@ -338,6 +338,10 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
+        self.rpc_service.add(impl_kb_Bwa.get_bwa_index,
+                             name='kb_Bwa.get_bwa_index',
+                             types=[dict])
+        self.method_authentication['kb_Bwa.get_bwa_index'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_Bwa.run_kb_Bwa,
                              name='kb_Bwa.run_kb_Bwa',
                              types=[dict])

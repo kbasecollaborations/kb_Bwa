@@ -3,7 +3,8 @@ from pprint import pprint
 import os
 import time
 import traceback
-
+import glob
+import shutil
 from kb_Bwa.util.BwaRunner import BwaRunner
 
 from installed_clients.AssemblyUtilClient import AssemblyUtil
@@ -22,7 +23,7 @@ class BwaIndexBuilder:
         self.provenance = provenance
 
     def get_index(self, params):
-        ''' The key function of this module- get a bowtie2 index for the specified input '''
+        ''' The key function of this module- get a bwa index for the specified input '''
 
         # validate the parameters and fetch assembly_info
         validated_params = self._validate_params(params)
@@ -56,7 +57,7 @@ class BwaIndexBuilder:
             validated_params['output_dir'] = params['output_dir']
         else:
             validated_params['output_dir'] = os.path.join(self.scratch_dir,
-                                                          'bowtie2_index_' + str(int(time.time() * 100)))
+                                                          'bwa_index_' + str(int(time.time() * 100)))
 
         if os.path.exists(validated_params['output_dir']):
             raise ('Output directory name specified (' + validated_params['output_dir'] +
@@ -65,7 +66,7 @@ class BwaIndexBuilder:
         if 'ws_for_cache' in params and params['ws_for_cache']:
             validated_params['ws_for_cache'] = params['ws_for_cache']
         else:
-            print('WARNING: bowtie2 index if created will not be cached because "ws_for_cache" field not set')
+            print('WARNING: bwa index if created will not be cached because "ws_for_cache" field not set')
             validated_params['ws_for_cache'] = None
 
         return validated_params
@@ -86,7 +87,7 @@ class BwaIndexBuilder:
             info = self.ws.get_object_info3({'objects': [{'ref': ref_path}]})['infos'][0]
             return {'info': info, 'ref': ref_path, 'genome_ref': ref}
 
-        raise ValueError('Input object was not of type: Assembly, ContigSet or Genome.  Cannot get Bowtie2 Index.')
+        raise ValueError('Input object was not of type: Assembly, ContigSet or Genome.  Cannot get bwa Index.')
 
     def _get_cached_index(self, assembly_info, validated_params):
 
@@ -100,20 +101,20 @@ class BwaIndexBuilder:
             objs = self.ws.list_referencing_objects([{'ref': ref}])[0]
 
             # iterate through each of the objects that reference the assembly
-            bowtie2_indexes = []
+            bwa_indexes = []
             for o in objs:
                 if o[2].startswith('KBaseRNASeq.Bowtie2IndexV2'):
-                    bowtie2_indexes.append(o)
+                    bwa_indexes.append(o)
 
             # Nothing refs this assembly, so cache miss
-            if len(bowtie2_indexes) == 0:
+            if len(bwa_indexes) == 0:
                 return False
 
             # if there is more than one hit, get the most recent one
             # (obj_info[3] is the save_date timestamp (eg 2017-05-30T22:56:49+0000), so we can sort on that)
-            bowtie2_indexes.sort(key=lambda x: x[3])
-            bowtie2_index_info = bowtie2_indexes[-1]
-            index_ref = str(bowtie2_index_info[6]) + '/' + str(bowtie2_index_info[0]) + '/' + str(bowtie2_index_info[4])
+            bwa_indexes.sort(key=lambda x: x[3])
+            bwa_index_info = bwa_indexes[-1]
+            index_ref = str(bwa_index_info[6]) + '/' + str(bwa_index_info[0]) + '/' + str(bwa_index_info[4])
 
             # get the object data
             index_obj_data = self.ws.get_objects2({'objects': [{'ref': index_ref}]})['data'][0]['data']
@@ -142,7 +143,7 @@ class BwaIndexBuilder:
     def _put_cached_index(self, assembly_info, index_files_basename, output_dir, ws_for_cache):
 
         if not ws_for_cache:
-            print('WARNING: bowtie2 index cannot be cached because "ws_for_cache" field not set')
+            print('WARNING: bwa index cannot be cached because "ws_for_cache" field not set')
             return False
 
         try:
@@ -151,7 +152,7 @@ class BwaIndexBuilder:
                                         'make_handle': 1,
                                         'pack': 'targz'})
 
-            bowtie2_index = {'handle': result['handle'], 'size': result['size'],
+            bwa_index = {'handle': result['handle'], 'size': result['size'],
                              'assembly_ref': assembly_info['ref'],
                              'index_files_basename': index_files_basename}
 
@@ -159,7 +160,7 @@ class BwaIndexBuilder:
             save_params = {'objects': [{'hidden': 1,
                                         'provenance': self.provenance,
                                         'name': os.path.basename(output_dir),
-                                        'data': bowtie2_index,
+                                        'data': bwa_index,
                                         'type': 'KBaseRNASeq.Bowtie2IndexV2'
                                         }]
                            }
@@ -194,6 +195,9 @@ class BwaIndexBuilder:
         # configure the command line args and run it
         cli_params = self._build_cli_params(fasta_info['path'], fasta_info['assembly_name'], validated_params)
         self.bwa.run('index', cli_params)
+        for file in glob.glob(r'/kb/module/work/tmp/test_genome_assembly.*'):
+            print(file)
+            shutil.copy(file, validated_params['output_dir'])
         index_info = {'output_dir': validated_params['output_dir'],
                       'index_files_basename': fasta_info['assembly_name']}
 
@@ -217,7 +221,7 @@ class BwaIndexBuilder:
 
         # positional args: first the fasta path, then the base name used for the index files
         cli_params.append(fasta_file_path)
-        cli_params.append( "-p ")
+        cli_params.append("-p")
         cli_params.append(index_files_basename)
         #cli_params.append(os.path.join(validated_params['output_dir'], "-p " +index_files_basename))
 

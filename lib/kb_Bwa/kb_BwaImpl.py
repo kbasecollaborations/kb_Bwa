@@ -91,10 +91,10 @@ class kb_Bwa:
                                                   self.callback_url, self.srv_wiz_url,
                                                   ctx.provenance())
         result = bwaIndexBuilder.get_index(params)
-        exit(result)
+
         report = KBaseReport(self.callback_url)
         report_info = report.create({'report': {'objects_created':[],
-                                                'text_message': params['parameter_1']},
+                                                'text_message': "report submitted"},
                                                 'workspace_name': params['workspace_name']})
         output = {
             'report_name': report_info['name'],

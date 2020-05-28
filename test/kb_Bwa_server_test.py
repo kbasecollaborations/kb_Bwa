@@ -110,6 +110,6 @@ class kb_BwaTest(unittest.TestCase):
         # finally, try it with a genome_ref instead
         genome_ref = self.loadGenome()
         res = self.getImpl().run_kb_Bwa(self.getContext(), {'workspace_name': self.wsName,'ref': genome_ref})
-        exit(res)
+
 
 

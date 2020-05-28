@@ -15,8 +15,10 @@ class BwaRunner:
         if command not in self.valid_commands:
             raise ValueError('Invalid bwa command: ' + str(command))
 
-        command = [self.BWA_PATH + " " + command] + options
-        exit(command)
+
+        command = [command] + options
+        command.insert(0, self.BWA_PATH)
+        #command = [self.BWA_PATH + " " + command] + options
         #command = [os.path.join(self.BWA_PATH, command)] + options
 
         print('In working directory: ' + ' '.join(command))
@@ -25,6 +27,7 @@ class BwaRunner:
 
         if not cwd:
           cwd = self.scratch_dir
+
 
         p = subprocess.Popen(command, cwd=cwd, shell=False)
         exitCode = p.wait()

@@ -28,7 +28,7 @@ class kb_Bwa:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/man4ish/kb_Bwa.git"
-    GIT_COMMIT_HASH = "90da33585c5d7568a85322052dd36d7d0219a0c7"
+    GIT_COMMIT_HASH = "e611a3e6462c0a9b852bd71e8daeeb0e044ebc57"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -46,61 +46,7 @@ class kb_Bwa:
         #END_CONSTRUCTOR
         pass
 
-
-    def align_reads_to_assembly_app(self, ctx, params):
-        """
-        :param params: instance of type "AlignReadsParams" -> structure:
-           parameter "input_ref" of String, parameter
-           "assembly_or_genome_ref" of String, parameter "output_name" of
-           String, parameter "output_workspace" of String, parameter
-           "output_obj_name_suffix" of String, parameter
-           "output_alignment_suffix" of String, parameter "condition_label"
-           of String, parameter "phred33" of String, parameter "phred64" of
-           String, parameter "local" of String, parameter "very-fast" of
-           String, parameter "fast" of String, parameter "very-sensitive" of
-           String, parameter "sensitive" of String, parameter
-           "very-fast-local" of String, parameter "very-sensitive-local" of
-           String, parameter "fast-local" of String, parameter
-           "fast-sensitive" of String, parameter "quality_score" of String,
-           parameter "alignment_type" of String, parameter "trim5" of Long,
-           parameter "trim3" of Long, parameter "np" of Long, parameter
-           "preset_options" of String, parameter "minins" of Long, parameter
-           "maxins" of Long, parameter "orientation" of String, parameter
-           "concurrent_njsw_tasks" of Long, parameter
-           "concurrent_local_tasks" of Long
-        :returns: instance of type "AlignReadsResult" -> structure: parameter
-           "reads_alignment_ref" of String, parameter
-           "read_alignment_set_ref" of String, parameter "report_name" of
-           String, parameter "report_ref" of String
-        """
-        # ctx is the context object
-        # return variables are: result
-        #BEGIN align_reads_to_assembly_app
-        print('Running align_reads_to_assembly_app() with params=')
-        pprint(params)
-        bwa_aligner = BwaAligner(self.scratch_dir, self.workspace_url,
-                                         self.callback_url, self.srv_wiz_url,
-                                         ctx.provenance())
-        result = bwa_aligner.align(params)
-        # END align_reads_to_assembly_app
-
-        # At some point might do deeper type checking...
-        if not isinstance(result, dict):
-            raise ValueError('Method align_reads_to_assembly_app return value ' +
-                             'result is not type dict as required.')
-        # return the results
-        return [result]
-
-
-    def align_one_reads_to_assembly(self, ctx):
-        """
-        aligns a single reads object to produce
-        """
-        # ctx is the context object
-        #BEGIN align_one_reads_to_assembly
-        #END align_one_reads_to_assembly
-        pass
-
+    '''
     def get_bwa_index(self, ctx, params):
         """
         :param params: instance of type "GetBwaIndex" -> structure: parameter
@@ -117,13 +63,19 @@ class kb_Bwa:
         # return variables are: result
         #BEGIN get_bwa_index
         #END get_bwa_index
-
+        report = KBaseReport(self.callback_url)
+        report_info = report.create({'report': {'objects_created': []},
+                                     'workspace_name': params['workspace_name']})
+        result = {
+            'report_name': report_info['name'],
+            'report_ref': report_info['ref'],
+        }
         # At some point might do deeper type checking...
         if not isinstance(result, dict):
             raise ValueError('Method get_bwa_index return value ' +
                              'result is not type dict as required.')
         # return the results
-        return [result]
+        return [result]'''
 
     def run_kb_Bwa(self, ctx, params):
         """

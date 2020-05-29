@@ -27,6 +27,50 @@ typedef structure {
         boolean pushed_to_cache;
     } GetBwaIndexResult;
 
+    typedef structure {
+        string input_ref;
+        string assembly_or_genome_ref;
+        string output_name;
+        string output_workspace;
+        string output_obj_name_suffix;
+        string output_alignment_suffix;
+        string condition_label;
+        string phred33;
+        string phred64;
+        string local;
+        string very-fast;
+        string fast;
+        string very-sensitive;
+        string sensitive;
+        string very-fast-local;
+        string very-sensitive-local;
+        string fast-local;
+        string fast-sensitive;
+        string quality_score;
+        string alignment_type;
+        int trim5;
+        int trim3;
+        int np;
+        string preset_options;
+        int minins;
+        int maxins;
+        string orientation;
+        int concurrent_njsw_tasks;
+        int concurrent_local_tasks;
+    } AlignReadsParams;
+    typedef structure {
+        string reads_alignment_ref;
+        string read_alignment_set_ref;
+        string report_name;
+        string report_ref;
+    } AlignReadsResult;
+    funcdef align_reads_to_assembly_app(AlignReadsParams params)
+        returns (AlignReadsResult result) authentication required;
+    /* aligns a single reads object to produce */
+    funcdef align_one_reads_to_assembly()
+        returns () authentication required;
+
+
     funcdef get_bwa_index(GetBwaIndex params)
         returns(GetBwaIndexResult result) authentication required;
 

@@ -8,7 +8,7 @@ class BwaRunner:
 
     def __init__(self, scratch_dir):
         self.scratch_dir = scratch_dir
-        self.valid_commands = ['index']
+        self.valid_commands = ['index', 'aln', 'samse', 'mem', 'pemerge', 'fastmap', 'sampe', 'bwasw']
 
     def run(self, command, options, cwd=None):
         ''' options is an array of command-line parameters passed to the RQCFilter App '''
@@ -18,16 +18,14 @@ class BwaRunner:
 
         command = [command] + options
         command.insert(0, self.BWA_PATH)
-        #command = [self.BWA_PATH + " " + command] + options
-        #command = [os.path.join(self.BWA_PATH, command)] + options
 
         print('In working directory: ' + ' '.join(command))
         print('Running: ' + ' '.join(command))
 
+        print(command)
 
         if not cwd:
           cwd = self.scratch_dir
-
 
         p = subprocess.Popen(command, cwd=cwd, shell=False)
         exitCode = p.wait()

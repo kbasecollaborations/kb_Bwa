@@ -194,10 +194,13 @@ class BwaIndexBuilder:
 
         # configure the command line args and run it
         cli_params = self._build_cli_params(fasta_info['path'], fasta_info['assembly_name'], validated_params)
+        print("****" + fasta_info['assembly_name'] + "*****")
+
         self.bwa.run('index', cli_params)
-        for file in glob.glob(r'/kb/module/work/tmp/test_genome_assembly.*'):
+        for file in glob.glob(r'/kb/module/work/tmp/' + fasta_info['assembly_name'] + '.*'):
             print(file)
             shutil.copy(file, validated_params['output_dir'])
+
         index_info = {'output_dir': validated_params['output_dir'],
                       'index_files_basename': fasta_info['assembly_name']}
 

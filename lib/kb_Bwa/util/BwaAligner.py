@@ -30,11 +30,11 @@ class BwaAligner:
         self.my_version = 'release'
         if len(provenance) > 0:
             if 'subactions' in provenance[0]:
-                self.my_version = self.get_version_from_subactions('kb_Bowtie2', provenance[0]['subactions'])
-        print('Running kb_Bowtie2 version = ' + self.my_version)
+                self.my_version = self.get_version_from_subactions('kb_Bwa', provenance[0]['subactions'])
+        print('Running kb_Bwa version = ' + self.my_version)
 
         self.ws = Workspace(self.workspace_url)
-        self.bowtie2 = BwaRunner(self.scratch_dir)
+        self.bwa = BwaRunner(self.scratch_dir)
         self.parallel_runner = KBParallel(self.callback_url)
         self.qualimap = kb_QualiMap(self.callback_url)
 
@@ -79,7 +79,7 @@ class BwaAligner:
 
         if input_info['run_mode'] == 'sample_set':
             reads = self.fetch_reads_refs_from_sampleset(input_info['ref'], input_info['info'], validated_params)
-            self.build_bowtie2_index(assembly_or_genome_ref, validated_params['output_workspace'])
+            self.build_bwa_index(assembly_or_genome_ref, validated_params['output_workspace'])
 
             print('Running on set of reads=')
             pprint(reads)
@@ -112,21 +112,21 @@ class BwaAligner:
         task_params['create_report'] = 0
         task_params['condition_label'] = condition
 
-        return {'module_name': 'kb_Bowtie2',
+        return {'module_name': 'kb_Bwa',
                 'function_name': 'align_reads_to_assembly_app',
                 'version': self.my_version,
                 'parameters': task_params}
 
     def single_reads_lib_run(self, read_lib_info, assembly_or_genome_ref, validated_params,
-                             create_report=False, bowtie2_index_info=None):
+                             create_report=False, bwa_index_info=None):
         ''' run on one reads '''
 
-        # download reads and prepare any bowtie2 index files
+        # download reads and prepare any bwa index files
         input_configuration = self.prepare_single_run(read_lib_info, assembly_or_genome_ref,
-                                                      bowtie2_index_info, validated_params['output_workspace'])
+                                                      bwa_index_info, validated_params['output_workspace'])
 
         # run the actual program
-        run_output_info = self.run_bowtie2_align_cli(input_configuration, validated_params)
+        run_output_info = self.run_bwa_align_cli(input_configuration, validated_params)
 
         # process the result and save the output
         upload_results = self.save_read_alignment_output(run_output_info, input_configuration, validated_params)
@@ -140,27 +140,27 @@ class BwaAligner:
 
         return {'output_info': run_output_info, 'report_info': report_info}
 
-    def build_bowtie2_index(self, assembly_or_genome_ref, ws_for_cache):
-        bowtie2IndexBuilder = BwaIndexBuilder(self.scratch_dir, self.workspace_url,
+    def build_bwa_index(self, assembly_or_genome_ref, ws_for_cache):
+        bwaIndexBuilder = BwaIndexBuilder(self.scratch_dir, self.workspace_url,
                                                   self.callback_url, self.srv_wiz_url,
                                                   self.provenance)
 
-        return bowtie2IndexBuilder.get_index({'ref': assembly_or_genome_ref,
+        return bwaIndexBuilder.get_index({'ref': assembly_or_genome_ref,
                                               'ws_for_cache': ws_for_cache})
 
     def prepare_single_run(self, input_info, assembly_or_genome_ref,
-                           bowtie2_index_info, ws_for_cache):
-        ''' Given a reads ref and an assembly, setup the bowtie2 index '''
-        # first setup the bowtie2 index of the assembly
-        input_configuration = {'bowtie2_index_info': bowtie2_index_info}
-        if not bowtie2_index_info:
-            bowtie2IndexBuilder = BwaIndexBuilder(self.scratch_dir, self.workspace_url,
+                           bwa_index_info, ws_for_cache):
+        ''' Given a reads ref and an assembly, setup the bwa index '''
+        # first setup the bwa index of the assembly
+        input_configuration = {'bwa_index_info': bwa_index_info}
+        if not bwa_index_info:
+            bwaIndexBuilder = BwaIndexBuilder(self.scratch_dir, self.workspace_url,
                                                       self.callback_url, self.srv_wiz_url,
                                                       self.provenance)
 
-            index_result = bowtie2IndexBuilder.get_index({'ref': assembly_or_genome_ref,
+            index_result = bwaIndexBuilder.get_index({'ref': assembly_or_genome_ref,
                                                           'ws_for_cache': ws_for_cache})
-            input_configuration['bowtie2_index_info'] = index_result
+            input_configuration['bwa_index_info'] = index_result
 
         # next download the reads
         read_lib_ref = input_info['ref']
@@ -177,20 +177,24 @@ class BwaAligner:
 
         return input_configuration
 
-    def run_bowtie2_align_cli(self, input_configuration, validated_params):
+    def run_bwa_align_cli(self, input_configuration, validated_params):
         # pprint('======== input_configuration =====')
         # pprint(input_configuration)
         options = []
         run_output_info = {}
 
-        # set the bowtie2 index location
-        bt2_index_dir = input_configuration['bowtie2_index_info']['output_dir']
-        bt2_index_basename = input_configuration['bowtie2_index_info']['index_files_basename']
-        options.extend(['-x', bt2_index_basename])
+        # set the bwa index location
+        bt2_index_dir = input_configuration['bwa_index_info']['output_dir']
+
+        bt2_index_basename = input_configuration['bwa_index_info']['index_files_basename']
+        #options.extend(['-x', bt2_index_basename])
+
+        reference = os.path.join(bt2_index_dir, bt2_index_basename)
+        options.append(reference)
 
         # set the input reads
         if input_configuration['reads_lib_type'] == 'SingleEndLibrary':
-            options.extend(['-U', input_configuration['reads_files']['files']['fwd']])
+            options.extend(['-0', input_configuration['reads_files']['files']['fwd']])
             run_output_info['library_type'] = 'single_end'
         elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
             options.extend(['-1', input_configuration['reads_files']['files']['fwd']])
@@ -198,44 +202,42 @@ class BwaAligner:
             run_output_info['library_type'] = 'paired_end'
 
         # setup the output file name
-        output_dir = os.path.join(self.scratch_dir, 'bowtie2_alignment_output_' + str(int(time.time() * 10000)))
+        output_dir = os.path.join(self.scratch_dir, 'bwa_alignment_output_' + str(int(time.time() * 10000)))
         output_sam_file = os.path.join(output_dir, 'reads_alignment.sam')
         os.makedirs(output_dir)
-        options.extend(['-S', output_sam_file])
+        #options.extend(['-S', output_sam_file])
         run_output_info['output_sam_file'] = output_sam_file
         run_output_info['output_dir'] = output_dir
 
         # parse all the other parameters
         if 'quality_score' in validated_params:
-            options.append('--' + str(validated_params['quality_score']))
+            options.append('-q' + str(validated_params['quality_score']))
 
-        if 'alignment_type' in validated_params:
-            options.append('--' + str(validated_params['alignment_type']))
+        sai_file =  os.path.join(bt2_index_dir, bt2_index_basename ) + ".sai"
 
-        if 'preset_options' in validated_params:
-            if 'alignment_type' in validated_params and validated_params['alignment_type'] == 'local':
-                options.append('--' + str(validated_params['preset_options'] + '-local'))
-            else:
-                options.append('--' + str(validated_params['preset_options']))
+        options.extend(">", sai_file)
+        '''
+        align = bash('bwa aln -I -t 8 reference.fa reads.txt > out.sai')
+        sam = bash('bwa samse reference.fa out.sai reads.txt > out.sam')
+        '''
 
-        if 'trim5' in validated_params:
-            options.extend(['--trim5', str(validated_params['trim5'])])
-        if 'trim3' in validated_params:
-            options.extend(['--trim3', str(validated_params['trim3'])])
-        if 'np' in validated_params:
-            options.extend(['--np', str(validated_params['np'])])
+        self.bwa.run('aln', options, cwd=bt2_index_dir)
 
-        if 'minins' in validated_params:
-            options.extend(['--minins', str(validated_params['minins'])])
-        if 'maxins' in validated_params:
-            options.extend(['--maxins', str(validated_params['maxins'])])
+        options2 = []
+        options2.append(reference)
+        options2.append(sai_file)
 
-        options.extend(['-a'])  # report all distinct reads
+        if input_configuration['reads_lib_type'] == 'SingleEndLibrary':
+            options2.extend(['-0', input_configuration['reads_files']['files']['fwd']])
+        elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
+            options2.extend(['-1', input_configuration['reads_files']['files']['fwd']])
+            options2.extend(['-2', input_configuration['reads_files']['files']['rev']])
 
-        # unfortunately, bowtie2 expects the index files to be in the current directory, and
-        # you cannot configure it otherwise.  So run bowtie out of the index directory, but
-        # place the output SAM file somewhere else
-        self.bowtie2.run('bowtie2', options, cwd=bt2_index_dir)
+        sam_file = os.path.join(bt2_index_dir, bt2_index_basename) + ".sai"
+
+        options.extend(">", sam_file)
+
+        self.bwa.run('samse', options, cwd=bt2_index_dir)
 
         return run_output_info
 
@@ -273,7 +275,7 @@ class BwaAligner:
                                                   'objects_created': [
                                                       {'ref': run_output_info['upload_results']['obj_ref'],
                                                        'description': 'ReadsAlignment'}],
-                                                  'report_object_name': 'kb_Bowtie2_' + str(uuid.uuid4()),
+                                                  'report_object_name': 'kb_Bwa_' + str(uuid.uuid4()),
                                                   'direct_html_link_index': 0,
                                                   'html_links': [{'shock_id': qc_result_zip_info['shock_id'],
                                                                   'name': qc_result_zip_info['index_html_file_name'],
@@ -345,7 +347,7 @@ class BwaAligner:
         kbr = KBaseReport(self.callback_url)
         report_info = kbr.create_extended_report({'message': report_text,
                                                   'objects_created': objects_created,
-                                                  'report_object_name': 'kb_Bowtie2_' + str(uuid.uuid4()),
+                                                  'report_object_name': 'kb_Bwa_' + str(uuid.uuid4()),
                                                   'direct_html_link_index': 0,
                                                   'html_links': [{'shock_id': qc_result_zip_info['shock_id'],
                                                                   'name': qc_result_zip_info['index_html_file_name'],
@@ -367,7 +369,7 @@ class BwaAligner:
             if field in params and params[field]:
                 validated_params[field] = params[field]
             else:
-                raise ValueError('"' + field + '" field required to run bowtie2 aligner app')
+                raise ValueError('"' + field + '" field required to run bwa aligner app')
 
         optional_fields = ['quality_score', 'alignment_type', 'preset_options', 'trim5', 'trim3', 'condition_label',
                            'np', 'minins', 'maxins', 'output_alignment_suffix', 'output_alignment_name']

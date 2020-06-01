@@ -78,11 +78,12 @@ class kb_Bwa:
         #BEGIN align_reads_to_assembly_app
         print('Running align_reads_to_assembly_app() with params=')
         pprint(params)
-        bwa_aligner = BwaAligner(self.scratch_dir, self.workspace_url,
+        bwa_aligner = BwaAligner(self.shared_folder, self.workspace_url,
                                          self.callback_url, self.srv_wiz_url,
                                          ctx.provenance())
         result = bwa_aligner.align(params)
-        # END align_reads_to_assembly_app
+        print(result)
+        #END align_reads_to_assembly_app
 
         # At some point might do deeper type checking...
         if not isinstance(result, dict):

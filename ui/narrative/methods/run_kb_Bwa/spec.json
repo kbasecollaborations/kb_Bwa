@@ -1,13 +1,14 @@
 {
-  "ver" : "1.0.0",
-  "authors" : [ ],
-  "contact" : "help@kbase.us",
-  "visible" : true,
-  "categories" : ["active","expression","sequence"],
-  "widgets" : {
-    "input" : null,
-    "output" : "no-display"
-  },
+    "ver": "0.0.1",
+    "authors": [
+        "man4ish_gupta"
+    ],
+    "contact": "",
+    "categories": ["active"],
+    "widgets": {
+        "input": null,
+        "output": null
+    },
    "parameters" : [ {
     "id" : "input_ref",
     "optional" : false,
@@ -39,174 +40,6 @@
       "valid_ws_types" : [ ],
       "is_output_name" : true
     }
-  }, {
-    "id" : "quality_score",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "phred33" ],
-    "field_type" : "dropdown",
-    "dropdown_options":{
-      "options": [
-        {
-          "value": "phred33",
-          "display": "phred33",
-          "id": "phred33",
-          "ui_name": "phred33"
-        },
-        {
-          "value": "phred64",
-          "display": "phred64",
-          "id": "phred64",
-          "ui_name": "phred64"
-        }
-      ]
-    }
-  }, {
-    "id" : "alignment_type",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "end-to-end" ],
-    "field_type" : "dropdown",
-    "dropdown_options":{
-      "options": [
-        {
-          "value": "end-to-end",
-          "display": "end-to-end",
-          "id": "end-to-end",
-          "ui_name": "end-to-end"
-        },
-        {
-          "value": "local",
-          "display": "local",
-          "id": "local",
-          "ui_name": "local"
-        }
-      ]
-    }
-  }, {
-    "id" : "trim5",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "0" ],
-    "field_type" : "text",
-    "text_options" : {
-     "validate_as": "int"
-    }
-  }, {
-    "id" : "trim3",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "0" ],
-    "field_type" : "text",
-    "text_options" : {
-     "validate_as": "int"
-    }
-  }, {
-    "id" : "np",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "1" ],
-    "field_type" : "text",
-    "text_options" : {
-     "validate_as": "int"
-    }
-  }, {
-    "id" : "preset_options",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "" ],
-    "field_type" : "dropdown",
-    "dropdown_options":{
-      "options": [
-        {
-          "value": "sensitive",
-          "display": "sensitive",
-          "id": "sensitive",
-          "ui_name": "sensitive"
-        },
-        {
-          "value": "very-sensitive",
-          "display": "very-sensitive",
-          "id": "very-sensitive",
-          "ui_name": "very-sensitive"
-        },
-        {
-          "value": "fast",
-          "display": "fast",
-          "id": "fast",
-          "ui_name": "fast"
-        },
-        {
-          "value": "very-fast",
-          "display": "very-fast",
-          "id": "very-fast",
-          "ui_name": "very-fast"
-        }
-      ]
-    }
-  }, {
-    "id" : "minins",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "0" ],
-    "field_type" : "text",
-    "text_options" : {
-     "validate_as": "int"
-    }
-  }, {
-    "id" : "maxins",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "500" ],
-    "field_type" : "text",
-    "text_options" : {
-     "validate_as": "int"
-    }
-  }, {
-    "id" : "orientation",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "" ],
-    "field_type" : "dropdown",
-    "dropdown_options":{
-      "options": [
-        {
-          "value": "fr",
-          "display": "fr",
-          "id": "fr",
-          "ui_name": "fr"
-        },
-        {
-          "value": "rf",
-          "display": "rf",
-          "id": "rf",
-          "ui_name": "rf"
-        },
-        {
-          "value": "ff",
-          "display": "ff",
-          "id": "ff",
-          "ui_name": "ff"
-        }
-      ]
-    }
-  }, {
-    "id" : "condition_label",
-    "optional" : true,
-    "advanced" : true,
-    "allow_multiple" : false,
-    "default_values" : [ "unknown" ],
-    "field_type" : "text",
-    "text_options" : { }
   }, {
     "id" : "output_alignment_suffix",
     "optional" : true,
@@ -241,46 +74,6 @@
         {
           "input_parameter" : "output_obj_name_suffix",
           "target_property" : "output_obj_name_suffix"
-        },
-        {
-          "input_parameter" : "quality_score",
-          "target_property" : "quality_score"
-        },
-        {
-          "input_parameter" : "alignment_type",
-          "target_property" : "alignment_type"
-        },
-        {
-          "input_parameter" : "trim5",
-          "target_property" : "trim5"
-        },
-        {
-          "input_parameter" : "trim3",
-          "target_property" : "trim3"
-        },
-        {
-          "input_parameter" : "np",
-          "target_property" : "np"
-        },
-        {
-          "input_parameter" : "preset_options",
-          "target_property" : "preset_options"
-        },
-        {
-          "input_parameter" : "minins",
-          "target_property" : "minins"
-        },
-        {
-          "input_parameter" : "maxins",
-          "target_property" : "maxins"
-        },
-        {
-          "input_parameter" : "orientation",
-          "target_property" : "orientation"
-        },
-        {
-          "input_parameter" : "condition_label",
-          "target_property" : "condition_label"
         },
         {
           "input_parameter" : "output_alignment_suffix",

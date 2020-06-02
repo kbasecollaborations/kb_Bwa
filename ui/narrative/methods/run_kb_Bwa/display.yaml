@@ -19,7 +19,6 @@ method-suggestions :
     next :
         [assemble_transcripts_using_cufflinks,assemble_transcripts_using_stringtie]
 
-
 #
 # Configure the display and description of the parameters
 #
@@ -39,56 +38,6 @@ parameters :
             Output Alignment Set Name Suffix
         short-hint : |
             Provide the suffix to use for the output reads alignment set name.
-    alignment_type :
-        ui-name : |
-            Alignment Type
-        short-hint : |
-            Select the alignment type. By default, Bowtie2 performs end-to-end read alignment. It searches for alignments involving all of read characters. For the local option, it can clip some read characters from one or both ends of the alignment to maximize the alignment score.
-    quality_score :
-        ui-name : |
-            Alignment Quality Score Type
-        short-hint : |
-            Select the quality score type depending on the sequencing platform. The default is phred33, which is used by Illumina starting with v1.8.
-    preset_options :
-        ui-name : |
-            Alignment Type Preset Options
-        short-hint : |
-            Select the preset options based on alignment type. Faster takes less time because it is less sensitive.
-    trim5 :
-        ui-name : |
-            Trim Bases From 5'end
-        short-hint : |
-            Trim the base pairs from the 5' end of each read before alignment, if needed (default is 0).
-    trim3 :
-        ui-name : |
-            Trim Bases From 3'end
-        short-hint : |
-            Trim the base pairs from the 3' end of each read before alignment, if needed (default is 0).
-    np :
-        ui-name : |
-            Penalty
-        short-hint : |
-            Sets the penalty for positions where the read, reference, or both, contain an ambiguous character such as N (default is 1).
-    minins :
-        ui-name : |
-            Minimum Fragment Length For Paired-End Alignments
-        short-hint : |
-            Select the minimum fragment length for valid untrimmed paired-end alignments (default is 0).
-    maxins :
-        ui-name : |
-            Maximum Fragment Length For Paired-End Alignments
-        short-hint : |
-            Select the maximum fragment length for valid untrimmed paired-end alignments (default is 500).
-    orientation :
-        ui-name : |
-            Orientation
-        short-hint : |
-            Select the upstream/downstream mate orientations for valid paired-end alignments against the forward reference strand (default is FR).
-    condition_label:
-        ui-name : |
-            Condition Label for Single Library Run (optional)
-        short-hint : |
-            If you run this App on a single Reads Library and want to specify a condition label in the alignment, set this paramter.
     output_alignment_suffix :
         ui-name : Alignment output name suffix
         short-hint : Individual alignments will be given names based on the reads object name appended with this extension.

@@ -193,13 +193,16 @@ class BwaAligner:
         options.append(reference)
 
         # set the input reads
+        sam_parameter = ''
         if input_configuration['reads_lib_type'] == 'SingleEndLibrary':
             options.extend(['-0', input_configuration['reads_files']['files']['fwd']])
             run_output_info['library_type'] = 'single_end'
+            sam_parameter = 'samse'
         elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
             options.extend(['-1', input_configuration['reads_files']['files']['fwd']])
             options.extend(['-2', input_configuration['reads_files']['files']['rev']])
             run_output_info['library_type'] = 'paired_end'
+            sam_parameter = 'sampe'
 
         # setup the output file name
         output_dir = os.path.join(self.scratch_dir, 'bwa_alignment_output_' + str(int(time.time() * 10000)))
@@ -213,9 +216,9 @@ class BwaAligner:
         if 'quality_score' in validated_params:
             options.append('-q' + str(validated_params['quality_score']))
 
-        sai_file =  os.path.join(bt2_index_dir, bt2_index_basename ) + ".sai"
+        output_sai_file =  os.path.join(bt2_index_dir, bt2_index_basename ) + ".sai"
 
-        options.extend(">", sai_file)
+        options.extend([">", output_sai_file])
         '''
         align = bash('bwa aln -I -t 8 reference.fa reads.txt > out.sai')
         sam = bash('bwa samse reference.fa out.sai reads.txt > out.sam')
@@ -233,11 +236,11 @@ class BwaAligner:
             options2.extend(['-1', input_configuration['reads_files']['files']['fwd']])
             options2.extend(['-2', input_configuration['reads_files']['files']['rev']])
 
-        sam_file = os.path.join(bt2_index_dir, bt2_index_basename) + ".sai"
+        output_sam_file = os.path.join(bt2_index_dir, bt2_index_basename) + ".sam"
 
-        options.extend(">", sam_file)
+        options.extend([">", output_sam_file])
 
-        self.bwa.run('samse', options, cwd=bt2_index_dir)
+        self.bwa.run(sam_parameter, options, cwd=bt2_index_dir)
 
         return run_output_info
 

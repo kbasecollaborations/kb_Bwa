@@ -263,7 +263,7 @@ class kb_BwaAlignerTest(unittest.TestCase):
         self.assertIn('report_info', res)
         self.assertIn('report_name', res['report_info'])
         self.assertIn('report_ref', res['report_info'])
-    '''
+
     def test_bwa_aligner_with_readsset(self):
         assembly_ref = self.loadAssembly()
         se_lib_ref = self.loadSingleEndReads()
@@ -296,4 +296,4 @@ class kb_BwaAlignerTest(unittest.TestCase):
         self.assertIn('report_info', res)
         self.assertIn('report_name', res['report_info'])
         self.assertIn('report_ref', res['report_info'])
-        '''
+

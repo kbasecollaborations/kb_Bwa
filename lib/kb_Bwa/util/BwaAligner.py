@@ -190,57 +190,62 @@ class BwaAligner:
         #options.extend(['-x', bt2_index_basename])
 
         reference = os.path.join(bt2_index_dir, bt2_index_basename)
+
+        options_r = []
+        options_l = []
+
         options.append(reference)
+        options_r.append(reference)
+        options_l.append(reference)
+
+        output_dir = os.path.join(self.scratch_dir, 'bwa_alignment_output_' + str(int(time.time() * 10000)))
+        output_sam_file = os.path.join(output_dir, 'reads_alignment.sam')
+        os.makedirs(output_dir)
 
         # set the input reads
         sam_parameter = ''
         if input_configuration['reads_lib_type'] == 'SingleEndLibrary':
             options.extend(['-0', input_configuration['reads_files']['files']['fwd']])
             run_output_info['library_type'] = 'single_end'
+            output_sai_file = os.path.join(output_dir, bt2_index_basename) + ".sai"
+            options.extend(["-f", output_sai_file])
+            self.bwa.run('aln', options, cwd=bt2_index_dir)
             sam_parameter = 'samse'
+            options2 = []
+            options2.append(reference)
+            options2.append(output_sai_file)
+            options2.append(input_configuration['reads_files']['files']['fwd'])
+            options2.extend(["-f", output_sam_file])
+            self.bwa.run(sam_parameter, options2, cwd=bt2_index_dir)
         elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
-            options.extend(['-1', input_configuration['reads_files']['files']['fwd']])
-            options.extend(['-2', input_configuration['reads_files']['files']['rev']])
-            run_output_info['library_type'] = 'paired_end'
+            options_l.extend(['-1', input_configuration['reads_files']['files']['fwd']])
+            output_l_sai_file = os.path.join(output_dir, bt2_index_basename) + "_l.sai"
+            options_l.extend(["-f", output_l_sai_file])
+            self.bwa.run('aln', options_l, cwd=bt2_index_dir)
+            options_r.extend(['-2', input_configuration['reads_files']['files']['rev']])
+            output_r_sai_file = os.path.join(output_dir, bt2_index_basename) + "_r.sai"
+            options_r.extend(["-f", output_r_sai_file])
+            self.bwa.run('aln', options_r, cwd=bt2_index_dir)
             sam_parameter = 'sampe'
+            options2 = []
+            options2.append(reference)
+            options2.append(output_r_sai_file)
+            options2.append(output_l_sai_file)
+            options2.append(input_configuration['reads_files']['files']['rev'])
+            options2.append(input_configuration['reads_files']['files']['fwd'])
+            options2.extend(["-f", output_sam_file])
+            self.bwa.run(sam_parameter, options2, cwd=bt2_index_dir)
+            run_output_info['library_type'] = 'paired_end'
 
-        # setup the output file name
-        output_dir = os.path.join(self.scratch_dir, 'bwa_alignment_output_' + str(int(time.time() * 10000)))
-        output_sam_file = os.path.join(output_dir, 'reads_alignment.sam')
-        os.makedirs(output_dir)
-        #options.extend(['-S', output_sam_file])
-        run_output_info['output_sam_file'] = output_sam_file
-        run_output_info['output_dir'] = output_dir
-
-        # parse all the other parameters
-        if 'quality_score' in validated_params:
-            options.append('-q' + str(validated_params['quality_score']))
-
-        output_sai_file =  os.path.join(bt2_index_dir, bt2_index_basename ) + ".sai"
-
-        options.extend([">", output_sai_file])
         '''
         align = bash('bwa aln -I -t 8 reference.fa reads.txt > out.sai')
         sam = bash('bwa samse reference.fa out.sai reads.txt > out.sam')
         '''
+        # setup the output file name
 
-        self.bwa.run('aln', options, cwd=bt2_index_dir)
-
-        options2 = []
-        options2.append(reference)
-        options2.append(sai_file)
-
-        if input_configuration['reads_lib_type'] == 'SingleEndLibrary':
-            options2.extend(['-0', input_configuration['reads_files']['files']['fwd']])
-        elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
-            options2.extend(['-1', input_configuration['reads_files']['files']['fwd']])
-            options2.extend(['-2', input_configuration['reads_files']['files']['rev']])
-
-        output_sam_file = os.path.join(bt2_index_dir, bt2_index_basename) + ".sam"
-
-        options.extend([">", output_sam_file])
-
-        self.bwa.run(sam_parameter, options, cwd=bt2_index_dir)
+        # options.extend(['-S', output_sam_file])
+        run_output_info['output_sam_file'] = output_sam_file
+        run_output_info['output_dir'] = output_dir
 
         return run_output_info
 
@@ -302,10 +307,14 @@ class BwaAligner:
         for k in range(0, len(batch_result['results'])):
             job = batch_result['results'][k]
             result_package = job['result_package']
+            exit(result_package)
             if job['is_error']:
                 n_error += 1
             else:
                 n_success += 1
+                print(result_package['result'])
+                print(result_package['result'][0])
+                print(result_package['result'][0]['output_info'])
                 output_info = result_package['result'][0]['output_info']
                 ra_ref = output_info['upload_results']['obj_ref']
                 # Note: could add a label to the alignment here?

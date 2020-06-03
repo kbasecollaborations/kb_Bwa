@@ -89,7 +89,7 @@ class kb_BwaTest(unittest.TestCase):
         return genome_ref
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    '''def test_your_method(self):
+    def test_your_method(self):
         # Prepare test objects in workspace if needed using
         # self.getWsClient().save_objects({'workspace': self.getWsName(),
         #                                  'objects': []})
@@ -102,14 +102,14 @@ class kb_BwaTest(unittest.TestCase):
         genome_ref = self.loadGenome()
 
         ret = self.serviceImpl.run_kb_Bwa(self.ctx, {'workspace_name': self.wsName,
-                                                         'parameter_1': 'Hello World!'})'''
+                                                         'parameter_1': 'Hello World!'})
 
 
     def test_build_bowtie2_index_from_genome(self):
 
         # finally, try it with a genome_ref instead
         genome_ref = self.loadGenome()
-        res = self.getImpl().run_kb_Bwa(self.getContext(), {'workspace_name': self.wsName,'ref': genome_ref})
+        res = self.getImpl().get_bwa_index(self.getContext(), {'workspace_name': self.wsName,'ref': genome_ref})
 
 
 

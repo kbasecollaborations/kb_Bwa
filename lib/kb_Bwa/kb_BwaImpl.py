@@ -117,6 +117,10 @@ class kb_Bwa:
         # ctx is the context object
         # return variables are: result
         #BEGIN get_bwa_index
+        bwaIndexBuilder = BwaIndexBuilder(self.shared_folder, self.workspace_url,
+                                          self.callback_url, self.srv_wiz_url,
+                                          ctx.provenance())
+        result = bwaIndexBuilder.get_index(params)
         #END get_bwa_index
 
         # At some point might do deeper type checking...
@@ -136,10 +140,7 @@ class kb_Bwa:
         # return variables are: output
         #BEGIN run_kb_Bwa
 
-        bwaIndexBuilder = BwaIndexBuilder(self.shared_folder, self.workspace_url,
-                                                  self.callback_url, self.srv_wiz_url,
-                                                  ctx.provenance())
-        result = bwaIndexBuilder.get_index(params)
+
 
         report = KBaseReport(self.callback_url)
         report_info = report.create({'report': {'objects_created':[],

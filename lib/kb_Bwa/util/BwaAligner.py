@@ -307,7 +307,6 @@ class BwaAligner:
         for k in range(0, len(batch_result['results'])):
             job = batch_result['results'][k]
             result_package = job['result_package']
-            exit(result_package)
             if job['is_error']:
                 n_error += 1
             else:

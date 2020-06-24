@@ -141,8 +141,8 @@ class kb_BwaAlignerTest(unittest.TestCase):
         if hasattr(self.__class__, 'assembly_ref'):
             return self.__class__.assembly_ref
         # return '23735/1/1'
-        fasta_path = os.path.join(self.scratch, 'test_ref.fa')
-        shutil.copy(os.path.join('data', 'bt_test_data', 'test_ref.fa'), fasta_path)
+        fasta_path = os.path.join(self.scratch, 'Ptrichocarpa_v3.1.assembly.fna')
+        shutil.copy(os.path.join('/kb/module/test/data', 'Ptrichocarpa_v3.1.assembly.fna'), fasta_path)
         au = AssemblyUtil(self.callback_url)
         assembly_ref = au.save_assembly_from_fasta({'file': {'path': fasta_path},
                                                     'workspace_name': self.getWsName(),
@@ -219,7 +219,7 @@ class kb_BwaAlignerTest(unittest.TestCase):
 
     def getContext(self):
         return self.__class__.ctx
-
+    '''
     def test_bwa_aligner_with_sampleset(self):
         assembly_ref = self.loadAssembly()
         genome_ref = self.loadGenome()
@@ -263,9 +263,11 @@ class kb_BwaAlignerTest(unittest.TestCase):
         self.assertIn('report_info', res)
         self.assertIn('report_name', res['report_info'])
         self.assertIn('report_ref', res['report_info'])
-
+    '''
     def test_bwa_aligner_with_readsset(self):
+        
         assembly_ref = self.loadAssembly()
+        '''
         se_lib_ref = self.loadSingleEndReads()
         params = {'input_ref': se_lib_ref,
                   'assembly_or_genome_ref': assembly_ref,
@@ -280,6 +282,7 @@ class kb_BwaAlignerTest(unittest.TestCase):
         self.assertIn('report_info', res)
         self.assertIn('report_name', res['report_info'])
         self.assertIn('report_ref', res['report_info'])
+        '''
 
         reads_set_ref = self.loadReadsSet()
         params = {'input_ref': reads_set_ref,

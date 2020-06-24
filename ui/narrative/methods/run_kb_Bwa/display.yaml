@@ -25,9 +25,9 @@ method-suggestions :
 parameters :
     input_ref :
         ui-name : |
-            RNA-seq SampleSet or Read Library
+            DNA-seq SampleSet or Read Library
         short-hint : |
-            Select the RNA-seq SampleSet or ReadsSet object. If you have only one sample of RNA-seq reads, select the corresponding library object.
+            Select the DNA-seq SampleSet or ReadsSet object. If you have only one sample of DNA-seq reads, select the corresponding library object.
     assembly_or_genome_ref :
         ui-name : |
             Assembly or Genome

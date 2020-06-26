@@ -6,7 +6,8 @@ from pprint import pprint
 from kb_Bwa.util.BwaIndexBuilder import BwaIndexBuilder
 from kb_Bwa.util.BwaAligner import BwaAligner
 from kb_Bwa.util.BwaRunner import BwaRunner
-
+#from kb_Bwa.util.DownloadFastqUtils import DownloadFastqUtils
+#from kb_Bwa.util.LoadreadsUtils import LoadreadsUtils
 from installed_clients.KBaseReportClient import KBaseReport
 #END_HEADER
 
@@ -41,6 +42,8 @@ class kb_Bwa:
         self.srv_wiz_url = config['srv-wiz-url']
         self.callback_url = os.environ['SDK_CALLBACK_URL']
         self.shared_folder = config['scratch']
+        #self.du = DownloadFastqUtils()
+        #self.lsu = LoadreadsUtils(self.shared_folder)
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
         #END_CONSTRUCTOR
@@ -76,8 +79,25 @@ class kb_Bwa:
         # ctx is the context object
         # return variables are: result
         #BEGIN align_reads_to_assembly_app
+        '''
+        logging.info("Downloading Fastq File")
+        fwd_fastq_file = self.du._stage_input_file(params['fastq_right_ref'], "single_end")["files"]["fwd"]
+        rev_fastq_file = self.du._stage_input_file(params['fastq_left_ref'], "single_end")["files"]["rev"]
+             
+   
+        logging.info("Downloading assembly file")
+        genome_assembly = self.du.download_genome(params['assembly_or_genome_ref'], self.shared_folder)['path']
+        '''
+        '''assembly_ref = self.lsu.loadAssembly(genome_assembly, params)
         print('Running align_reads_to_assembly_app() with params=')
+        reads_set_ref = self.lsu.loadReadsSet( fwd_fastq_file, rev_fastq_file, params )
+        params['input_ref'] = reads_set_ref'''
+
+
+        params['output_workspace'] = params['workspace']
         pprint(params)
+
+        
         bwa_aligner = BwaAligner(self.shared_folder, self.workspace_url,
                                          self.callback_url, self.srv_wiz_url,
                                          ctx.provenance())

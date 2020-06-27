@@ -103,6 +103,16 @@ class kb_Bwa:
                                          ctx.provenance())
         result = bwa_aligner.align(params)
         print(result)
+
+        report = KBaseReport(self.callback_url)
+        report_info = report.create({'report': {'objects_created':[],
+                                                'text_message': "report submitted"},
+                                                'workspace_name': params['output_workspace']})
+        output = {
+            'report_name': report_info['name'],
+            'report_ref': report_info['ref'],
+        }
+
         #END align_reads_to_assembly_app
 
         # At some point might do deeper type checking...

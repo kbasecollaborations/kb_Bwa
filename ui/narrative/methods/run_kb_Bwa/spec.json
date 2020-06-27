@@ -55,7 +55,7 @@
     "service-mapping" : {
       "url" : "",
       "name" : "kb_Bwa",
-      "method" : "run_kb_Bwa",
+      "method" : "align_reads_to_assembly_app",
       "input_mapping" : [
         {
           "narrative_system_variable": "workspace",

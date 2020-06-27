@@ -94,7 +94,7 @@ class kb_Bwa:
         params['input_ref'] = reads_set_ref'''
 
 
-        params['output_workspace'] = params['workspace']
+        #params['output_workspace'] = params['workspace']
         pprint(params)
 
         

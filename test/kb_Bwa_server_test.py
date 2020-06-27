@@ -111,8 +111,10 @@ class kb_BwaTest(unittest.TestCase):
         # finally, try it with a genome_ref instead
         #genome_ref = self.loadGenome()
         params = {
-                   'workspace': 'man4ish_gupta:narrative_1592707902187', 'assembly_or_genome_ref': '43745/33/4',
-                   'output_obj_name_suffix': 'readsAlignment1', 'input_ref' :'43745/22/1',
+                   'output_workspace': 'man4ish_gupta:narrative_1592707902187', 
+                   'assembly_or_genome_ref': '43745/33/4',
+                   'output_obj_name_suffix': 'readsAlignment1', 
+                   'input_ref' :'43745/22/1',
                    'output_alignment_suffix': '_some_ext'
                   }
         #res = self.getImpl().get_bwa_index(self.getContext(), params)

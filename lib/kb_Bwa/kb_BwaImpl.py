@@ -165,7 +165,7 @@ class kb_Bwa:
         report = KBaseReport(self.callback_url)
         report_info = report.create({'report': {'objects_created':[],
                                                 'text_message': "report submitted"},
-                                                'workspace_name': params['workspace_name']})
+                                                'workspace_name': params['output_workspace']})
         output = {
             'report_name': report_info['name'],
             'report_ref': report_info['ref'],

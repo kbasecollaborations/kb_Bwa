@@ -80,7 +80,6 @@ class BwaAligner:
         if input_info['run_mode'] == 'sample_set':
             reads = self.fetch_reads_refs_from_sampleset(input_info['ref'], input_info['info'], validated_params)
             self.build_bwa_index(assembly_or_genome_ref, validated_params['output_workspace'])
-
             print('Running on set of reads=')
             pprint(reads)
 
@@ -124,7 +123,6 @@ class BwaAligner:
         # download reads and prepare any bwa index files
         input_configuration = self.prepare_single_run(read_lib_info, assembly_or_genome_ref,
                                                       bwa_index_info, validated_params['output_workspace'])
-
         # run the actual program
         run_output_info = self.run_bwa_align_cli(input_configuration, validated_params)
 
@@ -144,7 +142,6 @@ class BwaAligner:
         bwaIndexBuilder = BwaIndexBuilder(self.scratch_dir, self.workspace_url,
                                                   self.callback_url, self.srv_wiz_url,
                                                   self.provenance)
-
         return bwaIndexBuilder.get_index({'ref': assembly_or_genome_ref,
                                               'ws_for_cache': ws_for_cache})
 
@@ -218,6 +215,13 @@ class BwaAligner:
             options2.extend(["-f", output_sam_file])
             self.bwa.run(sam_parameter, options2, cwd=bt2_index_dir)
         elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
+            options = []
+            aln_parameter = "mem -t 32 -M -R '@RG\\tID:sample_1\\tLB:sample_1\\tPL:ILLUMINA\\tPM:HISEQ\\tSM:sample_1'"
+            options.append(reference)
+            options.append(input_configuration['reads_files']['files']['rev'])
+            options.append(input_configuration['reads_files']['files']['fwd'])
+            options.extend([">", output_sam_file])
+            '''
             options_l.extend(['-1', input_configuration['reads_files']['files']['fwd']])
             output_l_sai_file = os.path.join(output_dir, bt2_index_basename) + "_l.sai"
             options_l.extend(["-f", output_l_sai_file])
@@ -235,6 +239,8 @@ class BwaAligner:
             options2.append(input_configuration['reads_files']['files']['fwd'])
             options2.extend(["-f", output_sam_file])
             self.bwa.run(sam_parameter, options2, cwd=bt2_index_dir)
+            '''
+            self.bwa.run(aln_parameter, options, cwd=bt2_index_dir)
             run_output_info['library_type'] = 'paired_end'
 
         '''

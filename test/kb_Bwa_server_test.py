@@ -90,34 +90,28 @@ class kb_BwaTest(unittest.TestCase):
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
     '''
-    def test_your_method(self):
-        # Prepare test objects in workspace if needed using
-        # self.getWsClient().save_objects({'workspace': self.getWsName(),
-        #                                  'objects': []})
-        #
-        # Run your method by
-        # ret = self.getImpl().your_method(self.getContext(), parameters...)
-        #
-        # Check returned data with
-        # self.assertEqual(ret[...], ...) or other unittest methods
-        genome_ref = self.loadGenome()
-
-        ret = self.serviceImpl.run_kb_Bwa(self.ctx, {'workspace_name': self.wsName,
-                                                         'parameter_1': 'Hello World!'})
-    '''
-
-    def test_build_bowtie2_index_from_genome(self):
+    def test_build_bwa_index_from_genome(self):
 
         # finally, try it with a genome_ref instead
         #genome_ref = self.loadGenome()
         params = {
-                   'output_workspace': 'man4ish_gupta:narrative_1592707902187', 
+                   'output_workspace': 'man4ish_gupta:narrative_1592707902187',
                    'assembly_or_genome_ref': '43745/33/4',
-                   'output_obj_name_suffix': 'readsAlignment1', 
+                   'output_obj_name_suffix': 'readsAlignment1',
                    'input_ref' :'43745/22/1',
                    'output_alignment_suffix': '_some_ext'
                   }
-        #res = self.getImpl().get_bwa_index(self.getContext(), params)
+        res = self.getImpl().get_bwa_index(self.getContext(), params)
+    '''    
+    def test_build_bwa_align_reads_to_genome(self):
+
+        params = {
+                   'output_workspace': 'man4ish_gupta:narrative_1592707902187', 
+                   'assembly_or_genome_ref': '43745/33/4',
+                   'output_obj_name_suffix': 'readsAlignment1', 
+                   'input_ref' :'43745/109/1',
+                   'output_alignment_suffix': '_some_ext'
+                  }
         res = self.getImpl().align_reads_to_assembly_app(self.getContext(), params)
 
 

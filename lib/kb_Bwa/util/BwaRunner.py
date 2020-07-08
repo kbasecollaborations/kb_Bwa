@@ -8,12 +8,12 @@ class BwaRunner:
 
     def __init__(self, scratch_dir):
         self.scratch_dir = scratch_dir
-        self.valid_commands = ['index', 'aln', 'samse', 'mem', 'pemerge', 'fastmap', 'sampe', 'bwasw']
+        self.valid_commands = ['index', 'aln', 'samse', "mem -t 32 -M -R '@RG\tID:sample_1\tLB:sample_1\tPL:ILLUMINA\tPM:HISEQ\tSM:sample_1'", 'pemerge', 'fastmap', 'sampe', 'bwasw']
 
     def run(self, command, options, cwd=None):
         ''' options is an array of command-line parameters passed to the RQCFilter App '''
-        if command not in self.valid_commands:
-            raise ValueError('Invalid bwa command: ' + str(command))
+        '''if command not in self.valid_commands:
+            raise ValueError('Invalid bwa command: ' + str(command))'''
 
 
         command = [command] + options

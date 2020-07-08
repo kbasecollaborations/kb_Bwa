@@ -24,7 +24,7 @@ class BwaIndexBuilder:
 
     def get_index(self, params):
         ''' The key function of this module- get a bwa index for the specified input '''
-
+     
         # validate the parameters and fetch assembly_info
         validated_params = self._validate_params(params)
         assembly_info = self._get_assembly_info(validated_params['ref'])
@@ -47,6 +47,7 @@ class BwaIndexBuilder:
 
     def _validate_params(self, params):
         ''' validate parameters; can do some processing here to produce validated params '''
+        #params['ref'] = params['assembly_or_genome_ref']
         validated_params = {'ref': None}
         if 'ref' in params and params['ref']:
             validated_params['ref'] = params['ref']
@@ -196,7 +197,8 @@ class BwaIndexBuilder:
         cli_params = self._build_cli_params(fasta_info['path'], fasta_info['assembly_name'], validated_params)
         print("****" + fasta_info['assembly_name'] + "*****")
 
-        self.bwa.run('index', cli_params)
+        self.bwa.run('index -a bwtsw', cli_params)
+        #self.bwa.run('index', cli_params)
         for file in glob.glob(r'/kb/module/work/tmp/' + fasta_info['assembly_name'] + '.*'):
             print(file)
             shutil.copy(file, validated_params['output_dir'])

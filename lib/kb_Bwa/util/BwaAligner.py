@@ -217,6 +217,7 @@ class BwaAligner:
         elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
             options = []
             aln_parameter = "mem -t 32 -M -R '@RG\\tID:sample_1\\tLB:sample_1\\tPL:ILLUMINA\\tPM:HISEQ\\tSM:sample_1'"
+            #aln_parameter = "mem"
             options.append(reference)
             options.append(input_configuration['reads_files']['files']['rev'])
             options.append(input_configuration['reads_files']['files']['fwd'])

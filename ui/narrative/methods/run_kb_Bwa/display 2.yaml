@@ -43,11 +43,13 @@ parameters :
         short-hint : Individual alignments will be given names based on the reads object name appended with this extension.
 
 description : |
-    <p> This for maps low-divergent sequences against a large reference genome, such as the human genome. using Bwa and outputs a set of alignments in BAM format.</p>
+    <p>This App aligns the sequencing reads for a set of two or more samples to relatively long reference sequences, usually genomes, using Bwa and outputs a set of alignments in BAM format. Alternatively, if the user has only a single sample of reads or a set of reads, this App will take single-end or paired-end library object instead of a sample set.</p>
 
     <p>In addition, this App outputs the alignment statistics such as total reads, total reads mapped and unmapped, number of singletons, multiple alignments, and overall successful alignment rate in the table format.</p>
 
-    <p>Bwa supports end-to-end read alignment mode by default. This is also called an "untrimmed" or "unclipped" alignment. The App also supports "local" alignment mode, which produces alignments that might be "trimmed" (or "soft clipped") at one or both extremes in a way that optimizes the alignment score.</p>
+    <p>Bowtie2 supports end-to-end read alignment mode by default. In this mode, it searches for alignments involving all of the read characters. This is also called an "untrimmed" or "unclipped" alignment. The App also supports "local" alignment mode, which produces alignments that might be "trimmed" (or "soft clipped") at one or both extremes in a way that optimizes the alignment score.</p>
+
+    <p><strong>NOTE:</strong> This App is one of the steps in the <a href= "http://kbase.us/expression-analysis/">Transcriptomics and Expression Analysis workflow </a> in KBase, however it can also be run as a standalone for one or more RNA-seq samples.</p>
 
     <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Manish Kumar , Priya Ranjan. For questions, please <a href=”http://kbase.us/contact-us/”>contact us</a>.</p>
 

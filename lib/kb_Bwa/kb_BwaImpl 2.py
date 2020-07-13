@@ -79,26 +79,30 @@ class kb_Bwa:
         # ctx is the context object
         # return variables are: result
         #BEGIN align_reads_to_assembly_app
+        '''
+        logging.info("Downloading Fastq File")
+        fwd_fastq_file = self.du._stage_input_file(params['fastq_right_ref'], "single_end")["files"]["fwd"]
+        rev_fastq_file = self.du._stage_input_file(params['fastq_left_ref'], "single_end")["files"]["rev"]
+             
+   
+        logging.info("Downloading assembly file")
+        genome_assembly = self.du.download_genome(params['assembly_or_genome_ref'], self.shared_folder)['path']
+        '''
+        '''assembly_ref = self.lsu.loadAssembly(genome_assembly, params)
+        print('Running align_reads_to_assembly_app() with params=')
+        reads_set_ref = self.lsu.loadReadsSet( fwd_fastq_file, rev_fastq_file, params )
+        params['input_ref'] = reads_set_ref'''
 
-        #params['output_workspace'] = params['workspace']
+
+        params['output_workspace'] = params['workspace']
         pprint(params)
 
-        logging.info("aligning against ref genome\n")        
+        
         bwa_aligner = BwaAligner(self.shared_folder, self.workspace_url,
                                          self.callback_url, self.srv_wiz_url,
                                          ctx.provenance())
         result = bwa_aligner.align(params)
         print(result)
-
-        report = KBaseReport(self.callback_url)
-        report_info = report.create({'report': {'objects_created':[],
-                                                'text_message': "report submitted"},
-                                                'workspace_name': params['output_workspace']})
-        output = {
-            'report_name': report_info['name'],
-            'report_ref': report_info['ref'],
-        }
-
         #END align_reads_to_assembly_app
 
         # At some point might do deeper type checking...
@@ -136,7 +140,6 @@ class kb_Bwa:
         bwaIndexBuilder = BwaIndexBuilder(self.shared_folder, self.workspace_url,
                                           self.callback_url, self.srv_wiz_url,
                                           ctx.provenance())
-        logging.info("indexing ref genome ...\n")
         result = bwaIndexBuilder.get_index(params)
         #END get_bwa_index
 
@@ -162,7 +165,7 @@ class kb_Bwa:
         report = KBaseReport(self.callback_url)
         report_info = report.create({'report': {'objects_created':[],
                                                 'text_message': "report submitted"},
-                                                'workspace_name': params['output_workspace']})
+                                                'workspace_name': params['workspace_name']})
         output = {
             'report_name': report_info['name'],
             'report_ref': report_info['ref'],

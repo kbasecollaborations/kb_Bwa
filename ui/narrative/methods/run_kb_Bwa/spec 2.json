@@ -1,0 +1,104 @@
+{
+    "ver": "0.0.1",
+    "authors": [
+        "man4ish_gupta"
+    ],
+    "contact": "",
+    "categories": ["active"],
+    "widgets": {
+        "input": null,
+        "output": null
+    },
+   "parameters" : [ {
+    "id" : "input_ref",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : ["KBaseSets.ReadsSet", "KBaseRNASeq.RNASeqSampleSet" , "KBaseAssembly.SingleEndLibrary", "KBaseAssembly.PairedEndLibrary", "KBaseFile.SingleEndLibrary", "KBaseFile.PairedEndLibrary"]
+    }
+  }, {
+    "id" : "assembly_or_genome_ref",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : ["KBaseGenomes.Genome", "KBaseGenomeAnnotations.Assembly", "KBaseGenomes.ContigSet" ]
+    }
+  }, {
+    "id" : "output_obj_name_suffix",
+    "optional" : false,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "_alignment_set" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : [ ],
+      "is_output_name" : true
+    }
+  }, {
+    "id" : "output_alignment_suffix",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "_alignment" ],
+    "field_type" : "text",
+    "text_options" : { 
+      "is_output_name" : true
+    }
+  } ],
+  "behavior" : {
+    "service-mapping" : {
+      "url" : "",
+      "name" : "kb_Bwa",
+      "method" : "run_kb_Bwa",
+      "input_mapping" : [
+        {
+          "narrative_system_variable": "workspace",
+          "target_property" : "output_workspace"
+        },
+        {
+          "input_parameter" : "input_ref",
+          "target_property" : "input_ref",
+          "target_type_transform": "resolved-ref"
+        },
+        {
+          "input_parameter" : "assembly_or_genome_ref",
+          "target_property" : "assembly_or_genome_ref",
+          "target_type_transform": "resolved-ref"
+        },
+        {
+          "input_parameter" : "output_obj_name_suffix",
+          "target_property" : "output_obj_name_suffix"
+        },
+        {
+          "input_parameter" : "output_alignment_suffix",
+          "target_property" : "output_alignment_suffix"
+        }
+      ],
+      "output_mapping" : [
+        {
+          "narrative_system_variable": "workspace",
+          "target_property" : "workspace"
+        },
+        {
+          "narrative_system_variable": "workspace",
+          "target_property": "workspace_name"
+        },
+        {
+          "service_method_output_path": [0, "report_info", "report_name"],
+          "target_property": "report_name"
+        },
+        {
+          "service_method_output_path": [0, "report_info", "report_ref"],
+          "target_property": "report_ref"
+        }
+     ]
+    }
+  },
+  "job_id_output_field" : "docker"
+}

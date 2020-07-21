@@ -29,8 +29,10 @@ class BwaIndexBuilder:
         validated_params = self._validate_params(params)
         assembly_info = self._get_assembly_info(validated_params['ref'])
 
+        index_info = self._build_index(assembly_info, validated_params)
+ 
         # check the cache (keyed off of assembly_info)
-        index_info = self._get_cached_index(assembly_info, validated_params)
+        '''index_info = self._get_cached_index(assembly_info, validated_params)
         if index_info:
             index_info['from_cache'] = 1
             index_info['pushed_to_cache'] = 0
@@ -38,7 +40,7 @@ class BwaIndexBuilder:
             # on a cache miss, build the index
             index_info = self._build_index(assembly_info, validated_params)
             index_info['from_cache'] = 0
-            # pushed_to_cache will be set in return from _build_index
+            # pushed_to_cache will be set in return from _build_index'''
 
         index_info['assembly_ref'] = assembly_info['ref']
         index_info['genome_ref'] = assembly_info['genome_ref']
@@ -196,8 +198,8 @@ class BwaIndexBuilder:
         # configure the command line args and run it
         cli_params = self._build_cli_params(fasta_info['path'], fasta_info['assembly_name'], validated_params)
         print("****" + fasta_info['assembly_name'] + "*****")
-
-        self.bwa.run('index -a bwtsw', cli_params)
+        
+        self.bwa.run('index', cli_params)
         #self.bwa.run('index', cli_params)
         for file in glob.glob(r'/kb/module/work/tmp/' + fasta_info['assembly_name'] + '.*'):
             print(file)

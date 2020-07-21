@@ -154,11 +154,9 @@ class BwaAligner:
             bwaIndexBuilder = BwaIndexBuilder(self.scratch_dir, self.workspace_url,
                                                       self.callback_url, self.srv_wiz_url,
                                                       self.provenance)
-
             index_result = bwaIndexBuilder.get_index({'ref': assembly_or_genome_ref,
                                                           'ws_for_cache': ws_for_cache})
             input_configuration['bwa_index_info'] = index_result
-
         # next download the reads
         read_lib_ref = input_info['ref']
         read_lib_info = input_info['info']

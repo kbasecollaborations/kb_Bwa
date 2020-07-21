@@ -96,7 +96,7 @@ class kb_BwaTest(unittest.TestCase):
         #genome_ref = self.loadGenome()
         params = {
                    'output_workspace': 'man4ish_gupta:narrative_1592707902187',
-                   'assembly_or_genome_ref': '43745/33/4',
+                   'assembly_or_genome_ref': '45066/26/6',
                    'output_obj_name_suffix': 'readsAlignment1',
                    'input_ref' :'43745/22/1',
                    'output_alignment_suffix': '_some_ext'
@@ -106,10 +106,10 @@ class kb_BwaTest(unittest.TestCase):
     def test_build_bwa_align_reads_to_genome(self):
 
         params = {
-                   'output_workspace': 'man4ish_gupta:narrative_1592707902187', 
-                   'assembly_or_genome_ref': '43745/33/4',
+                   'output_workspace': 'man4ish_gupta:narrative_1594700475258', 
+                   'assembly_or_genome_ref': '45188/2/1',
                    'output_obj_name_suffix': 'readsAlignment1', 
-                   'input_ref' :'43745/109/1',
+                   'input_ref' :'45188/4/1',
                    'output_alignment_suffix': '_some_ext'
                   }
         res = self.getImpl().align_reads_to_assembly_app(self.getContext(), params)

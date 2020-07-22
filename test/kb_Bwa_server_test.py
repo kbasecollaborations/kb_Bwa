@@ -55,8 +55,6 @@ class kb_BwaTest(unittest.TestCase):
             cls.wsClient.delete_workspace({'workspace': cls.wsName})
             print('Test workspace was deleted')
 
-
-
     def getWsName(self):
         if hasattr(self.__class__, 'wsName'):
             return self.__class__.wsName

@@ -9,13 +9,15 @@ class BwaRunner:
 
     def __init__(self, scratch_dir):
         self.scratch_dir = scratch_dir
-        self.valid_commands = ['index', 'aln', 'samse', "mem -t 32 -M -R '@RG\tID:sample_1\tLB:sample_1\tPL:ILLUMINA\tPM:HISEQ\tSM:sample_1'", 'pemerge', 'fastmap', 'sampe', 'bwasw']
+        self.valid_commands = ['index', 'aln', 'samse',
+                               "mem -t 32 -M -R '@RG\\tID:sample_1\\tLB:sample_1\\tPL:ILLUMINA\\tPM:HISEQ\\tSM:sample_1'", 
+                               'pemerge', 'fastmap', 'sampe', 'bwasw']
 
     def run(self, command, options, cwd=None):
         ''' options is an array of command-line parameters passed to the RQCFilter App '''
-        '''if command not in self.valid_commands:
-            raise ValueError('Invalid bwa command: ' + str(command))'''
 
+        if command not in self.valid_commands:
+            raise ValueError('Invalid bwa command: ' + str(command))
 
         command = [command] + options
         command.insert(0, self.BWA_PATH)
@@ -26,19 +28,19 @@ class BwaRunner:
         print(command)
 
         if not cwd:
-          cwd = self.scratch_dir
- 
-        print("*****"+command[1]+"&&&&&&")
-        if((command[1]).startswith('mem')):
-           cmd = ' '.join(command)
-           os.system(cmd)   #TODO : need to remove system command 
-        else:        
-           p = subprocess.Popen(command, cwd=cwd, shell=False)
-           exitCode = p.wait()
+            cwd = self.scratch_dir
 
-           if (exitCode == 0):
-              print('Success, exit code was: ' + str(exitCode))
-           else:
-              raise ValueError('Error running command: ' + ' '.join(command) + '\n' +
-                             'Exit Code: ' + str(exitCode))
-                             
+        if((command[1]).startswith('mem')):
+            cmd = ' '.join(command)
+
+            '''TODO:need to remove system command'''
+            os.system(cmd)
+        else:
+            p = subprocess.Popen(command, cwd=cwd, shell=False)
+            exitCode = p.wait()
+
+            if (exitCode == 0):
+                print('Success, exit code was: ' + str(exitCode))
+            else:
+                raise ValueError('Error running command: ' + ' '.join(command) + '\n' +
+                      'Exit Code: ' + str(exitCode))

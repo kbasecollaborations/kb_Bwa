@@ -5,9 +5,9 @@ import os
 from pprint import pprint
 from kb_Bwa.util.BwaIndexBuilder import BwaIndexBuilder
 from kb_Bwa.util.BwaAligner import BwaAligner
-from kb_Bwa.util.BwaRunner import BwaRunner
-#from kb_Bwa.util.DownloadFastqUtils import DownloadFastqUtils
-#from kb_Bwa.util.LoadreadsUtils import LoadreadsUtils
+# from kb_Bwa.util.BwaRunner import BwaRunner
+# from kb_Bwa.util.DownloadFastqUtils import DownloadFastqUtils
+# from kb_Bwa.util.LoadreadsUtils import LoadreadsUtils
 from installed_clients.KBaseReportClient import KBaseReport
 #END_HEADER
 
@@ -49,7 +49,6 @@ class kb_Bwa:
         #END_CONSTRUCTOR
         pass
 
-
     def align_reads_to_assembly_app(self, ctx, params):
         """
         :param params: instance of type "AlignReadsParams" -> structure:
@@ -83,21 +82,21 @@ class kb_Bwa:
         #params['output_workspace'] = params['workspace']
         pprint(params)
 
-        logging.info("aligning against ref genome\n")        
+        logging.info("aligning against ref genome\n")
         bwa_aligner = BwaAligner(self.shared_folder, self.workspace_url,
-                                         self.callback_url, self.srv_wiz_url,
-                                         ctx.provenance())
+                                 self.callback_url, self.srv_wiz_url,
+                                 ctx.provenance())
         result = bwa_aligner.align(params)
         print(result)
 
         report = KBaseReport(self.callback_url)
-        report_info = report.create({'report': {'objects_created':[],
+        '''report_info = report.create({'report': {'objects_created':[],
                                                 'text_message': "report submitted"},
                                                 'workspace_name': params['output_workspace']})
         output = {
             'report_name': report_info['name'],
             'report_ref': report_info['ref'],
-        }
+        }'''
 
         #END align_reads_to_assembly_app
 
@@ -157,8 +156,6 @@ class kb_Bwa:
         # return variables are: output
         #BEGIN run_kb_Bwa
 
-
-
         report = KBaseReport(self.callback_url)
         report_info = report.create({'report': {'objects_created':[],
                                                 'text_message': "report submitted"},
@@ -175,6 +172,7 @@ class kb_Bwa:
                              'output is not type dict as required.')
         # return the results
         return [output]
+
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

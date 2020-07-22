@@ -3,7 +3,7 @@
 #
 name     : Align Reads using Bwa
 tooltip  : |
-    Align sequencing reads to long reference prokaryotic genome sequences using Bwa.
+    Align sequencing reads to long reference genome sequences using Bwa.
 
 screenshots :
     []

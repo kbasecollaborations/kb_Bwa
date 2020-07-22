@@ -1,23 +1,20 @@
-from pprint import pprint
-
 import os
 import time
 import uuid
 import copy
 import re
-
+from pprint import pprint
 from kb_Bwa.util.BwaRunner import BwaRunner
 from kb_Bwa.util.BwaIndexBuilder import BwaIndexBuilder
-
 from installed_clients.ReadsUtilsClient import ReadsUtils
 from installed_clients.ReadsAlignmentUtilsClient import ReadsAlignmentUtils
 from installed_clients.kb_QualiMapClient import kb_QualiMap
 from installed_clients.KBaseReportClient import KBaseReport
-
 from installed_clients.WorkspaceClient import Workspace
 from installed_clients.SetAPIServiceClient import SetAPI
-
 from installed_clients.KBParallelClient import KBParallel
+
+
 class BwaAligner:
     def __init__(self, scratch_dir, workspace_url, callback_url, srv_wiz_url, provenance):
         self.scratch_dir = scratch_dir
@@ -182,7 +179,6 @@ class BwaAligner:
         bt2_index_dir = input_configuration['bwa_index_info']['output_dir']
 
         bt2_index_basename = input_configuration['bwa_index_info']['index_files_basename']
-        #options.extend(['-x', bt2_index_basename])
 
         reference = os.path.join(bt2_index_dir, bt2_index_basename)
 
@@ -215,7 +211,6 @@ class BwaAligner:
         elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
             options = []
             aln_parameter = "mem -t 32 -M -R '@RG\\tID:sample_1\\tLB:sample_1\\tPL:ILLUMINA\\tPM:HISEQ\\tSM:sample_1'"
-            #aln_parameter = "mem"
             options.append(reference)
             options.append(input_configuration['reads_files']['files']['rev'])
             options.append(input_configuration['reads_files']['files']['fwd'])

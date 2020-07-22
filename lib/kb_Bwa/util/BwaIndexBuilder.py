@@ -6,11 +6,11 @@ import traceback
 import glob
 import shutil
 from kb_Bwa.util.BwaRunner import BwaRunner
-
 from installed_clients.AssemblyUtilClient import AssemblyUtil
 from installed_clients.WorkspaceClient import Workspace
 from installed_clients.GenomeAnnotationAPIServiceClient import GenomeAnnotationAPI
 from installed_clients.DataFileUtilClient import DataFileUtil
+
 
 class BwaIndexBuilder:
     def __init__(self, scratch_dir, ws_url, callback_url, service_wizard_url, provenance):
@@ -24,15 +24,13 @@ class BwaIndexBuilder:
 
     def get_index(self, params):
         ''' The key function of this module- get a bwa index for the specified input '''
-     
+
         # validate the parameters and fetch assembly_info
         validated_params = self._validate_params(params)
         assembly_info = self._get_assembly_info(validated_params['ref'])
 
-        index_info = self._build_index(assembly_info, validated_params)
- 
         # check the cache (keyed off of assembly_info)
-        '''index_info = self._get_cached_index(assembly_info, validated_params)
+        index_info = self._get_cached_index(assembly_info, validated_params)
         if index_info:
             index_info['from_cache'] = 1
             index_info['pushed_to_cache'] = 0
@@ -40,7 +38,7 @@ class BwaIndexBuilder:
             # on a cache miss, build the index
             index_info = self._build_index(assembly_info, validated_params)
             index_info['from_cache'] = 0
-            # pushed_to_cache will be set in return from _build_index'''
+            # pushed_to_cache will be set in return from _build_index
 
         index_info['assembly_ref'] = assembly_info['ref']
         index_info['genome_ref'] = assembly_info['genome_ref']
@@ -49,7 +47,7 @@ class BwaIndexBuilder:
 
     def _validate_params(self, params):
         ''' validate parameters; can do some processing here to produce validated params '''
-        #params['ref'] = params['assembly_or_genome_ref']
+        # params['ref'] = params['assembly_or_genome_ref']
         validated_params = {'ref': None}
         if 'ref' in params and params['ref']:
             validated_params['ref'] = params['ref']
@@ -134,7 +132,6 @@ class BwaIndexBuilder:
             return {'output_dir': validated_params['output_dir'],
                     'index_files_basename': index_obj_data['index_files_basename']}
 
-
         except Exception:
             # if we fail in saving the cached object, don't worry
             print('WARNING: exception encountered when trying to lookup in cache:')
@@ -156,8 +153,8 @@ class BwaIndexBuilder:
                                         'pack': 'targz'})
 
             bwa_index = {'handle': result['handle'], 'size': result['size'],
-                             'assembly_ref': assembly_info['ref'],
-                             'index_files_basename': index_files_basename}
+                         'assembly_ref': assembly_info['ref'],
+                         'index_files_basename': index_files_basename}
 
             ws = Workspace(self.ws_url)
             save_params = {'objects': [{'hidden': 1,
@@ -197,10 +194,8 @@ class BwaIndexBuilder:
 
         # configure the command line args and run it
         cli_params = self._build_cli_params(fasta_info['path'], fasta_info['assembly_name'], validated_params)
-        print("****" + fasta_info['assembly_name'] + "*****")
-        
         self.bwa.run('index', cli_params)
-        #self.bwa.run('index', cli_params)
+        # self.bwa.run('index', cli_params)
         for file in glob.glob(r'/kb/module/work/tmp/' + fasta_info['assembly_name'] + '.*'):
             print(file)
             shutil.copy(file, validated_params['output_dir'])
@@ -224,14 +219,9 @@ class BwaIndexBuilder:
         cli_params = []
 
         # always run in quiet mode
-        #cli_params.append('-a bwtsw')
-
         # positional args: first the fasta path, then the base name used for the index files
         cli_params.append(fasta_file_path)
         cli_params.append("-p")
         cli_params.append(index_files_basename)
-        #cli_params.append(os.path.join(validated_params['output_dir'], "-p " +index_files_basename))
 
         return cli_params
-
-

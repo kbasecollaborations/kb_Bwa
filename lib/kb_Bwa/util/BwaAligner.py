@@ -196,10 +196,18 @@ class BwaAligner:
         # set the input reads
         sam_parameter = ''
         if input_configuration['reads_lib_type'] == 'SingleEndLibrary':                   #TODO : Need to review algorithm for single end reads
-            options.extend(['-0', input_configuration['reads_files']['files']['fwd']])
+            #options.extend(['-0', input_configuration['reads_files']['files']['fwd']])
             run_output_info['library_type'] = 'single_end'
-            output_sai_file = os.path.join(output_dir, bt2_index_basename) + ".sai"
-            options.extend(["-f", output_sai_file])
+            #output_sai_file = os.path.join(output_dir, bt2_index_basename) + ".sai"
+            #options.extend(["-f", output_sai_file])
+            options = []
+            aln_parameter = "mem -t 32 -M -R '@RG\\tID:sample_1\\tLB:sample_1\\tPL:ILLUMINA\\tPM:HISEQ\\tSM:sample_1'"
+            options.append(reference)
+            options.append(input_configuration['reads_files']['files']['fwd'])
+            options.extend([">", output_sam_file])
+            self.bwa.run(aln_parameter, options, cwd=bt2_index_dir)
+
+            '''
             self.bwa.run('aln', options, cwd=bt2_index_dir)
             sam_parameter = 'samse'
             options2 = []
@@ -208,6 +216,7 @@ class BwaAligner:
             options2.append(input_configuration['reads_files']['files']['fwd'])
             options2.extend(["-f", output_sam_file])
             self.bwa.run(sam_parameter, options2, cwd=bt2_index_dir)
+            '''
         elif input_configuration['reads_lib_type'] == 'PairedEndLibrary':
             options = []
             aln_parameter = "mem -t 32 -M -R '@RG\\tID:sample_1\\tLB:sample_1\\tPL:ILLUMINA\\tPM:HISEQ\\tSM:sample_1'"

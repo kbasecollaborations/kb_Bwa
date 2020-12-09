@@ -107,7 +107,7 @@ class kb_BwaTest(unittest.TestCase):
                    'output_workspace': 'man4ish_gupta:narrative_1607014408133', 
                    'assembly_or_genome_ref': '57176/4/1',
                    'output_obj_name_suffix': 'readsAlignment1', 
-                   'input_ref' :'57176/7/1',
+                   'input_ref' :'57176/27/1',
                    'output_alignment_suffix': '_some_ext'
                   }
         res = self.getImpl().align_reads_to_assembly_app(self.getContext(), params)
